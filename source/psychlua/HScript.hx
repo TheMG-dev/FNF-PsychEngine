@@ -4,6 +4,10 @@ import flixel.FlxBasic;
 import objects.Character;
 import psychlua.LuaUtils;
 import psychlua.CustomSubstate;
+import flixel.group.FlxSpriteGroup;
+import openfl.display.BlendMode;
+
+
 
 #if LUA_ALLOWED
 import psychlua.FunkinLua;
@@ -151,6 +155,9 @@ class HScript extends Iris
 		set('FlxG', flixel.FlxG);
 		set('FlxMath', flixel.math.FlxMath);
 		set('FlxSprite', flixel.FlxSprite);
+        set('FlxSpriteGroup', flixel.group.FlxSpriteGroup);
+		set('BlendMode', openfl.display.BlendMode);
+        set('FlxText', flixel.text.FlxText);
 		set('FlxText', flixel.text.FlxText);
 		set('FlxCamera', flixel.FlxCamera);
 		set('PsychCamera', backend.PsychCamera);
