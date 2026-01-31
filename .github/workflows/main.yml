@@ -106,3 +106,45 @@ jobs:
         with:
           name: macBuild
           path: export/release/macos/bin
+  buildAndroid:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.1.7
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - uses: krdlab/setup-haxe@master
+        with:
+          haxe-version: 4.3.4
+
+      - name: Install Haxelib
+        run: |
+          haxelib setup ~/haxelib
+          haxelib install hxcpp > /dev/null --quiet
+          chmod +x ./setup/unix.sh
+          sh ./setup/unix.sh
+
+      - name: Configure Android
+        run: |
+          haxelib run lime setup -alias -y
+          haxelib run lime setup android --noprompt
+        env:
+          ANDROID_SDK: ${{ steps.setup-android.outputs.sdk-path }}
+          ANDROID_NDK: ${{ steps.setup-android.outputs.ndk-path }}
+          JAVA_HOME: ${{ env.JAVA_HOME }}
+
+      - name: Create Version Tag
+        run: echo "${{github.run_id}}" > VERSION
+
+      - name: Compile
+        run: haxelib run lime build android --app-version="4.0.0-${{ github.run_id}}" -D officialBuild
+
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v4.3.4
+        with:
+          name: androidBuild
+          path: export/release/android/bin/app/build/outputs/apk/release/*.apk
